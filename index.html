@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>RK Junior College | Light Theme 3D Loading</title>
+    <title>RK Junior College | Animated Stats</title>
     <!-- Google Fonts + Font Awesome -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -386,7 +386,7 @@
             display: block;
         }
 
-        /* Footer - clean spacing */
+        /* Footer */
         footer {
             background: #f1f5f9;
             padding: 2rem 5%;
@@ -511,7 +511,7 @@
         <div class="content">
             <nav class="navbar" id="navbar">
                 <div class="logo-wrapper">
-                    <img src="logo.PNG" alt="RK Junior College Logo" class="logo-img" id="navLogo">
+                    <img src="logo.png" alt="RK Junior College Logo" class="logo-img" id="navLogo">
                     <div class="logo-text">RK JUNIOR COLLEGE</div>
                 </div>
                 <div class="nav-links">
@@ -553,6 +553,7 @@
                 </div>
             </section>
 
+            <!-- Main Stats Panel (counts up) -->
             <section>
                 <div class="stats-panel reveal">
                     <div class="stats-container">
@@ -635,20 +636,21 @@
                 </div>
             </section>
 
+            <!-- Achievements Section (counts up as well) -->
             <section id="results">
                 <h2 class="section-title reveal">Our Achievements</h2>
                 <div class="stats-panel reveal" style="background: #f8fafc; color: #1e293b; border: 1px solid #e2e8f0;">
                     <div class="stats-container">
                         <div class="stat-item">
-                            <span class="stat-number" style="color: #2563eb;">98%</span>
+                            <span class="stat-number" id="achievementPassPercent">0</span>
                             <div style="font-weight: 600;">PASS PERCENTAGE</div>
                         </div>
                         <div class="stat-item">
-                            <span class="stat-number" style="color: #2563eb;">500+</span>
+                            <span class="stat-number" id="achievementSelections">0</span>
                             <div style="font-weight: 600;">JEE/NEET SELECTIONS</div>
                         </div>
                         <div class="stat-item">
-                            <span class="stat-number" style="color: #2563eb;">50+</span>
+                            <span class="stat-number" id="achievementRankers">0</span>
                             <div style="font-weight: 600;">CA FOUNDATION RANKERS</div>
                         </div>
                     </div>
@@ -736,7 +738,6 @@
         const logoTexture = textureLoader.load('logo.png', 
             () => {
                 console.log('Logo loaded');
-                // Also set the navbar logo image
                 if (navLogo) navLogo.src = 'logo.png';
             },
             undefined,
@@ -907,30 +908,44 @@
         }, { threshold: 0.1 });
         document.querySelectorAll('#main-content .reveal').forEach(el => observer.observe(el));
 
-        const startCounter = (id, target) => {
-            let count = 0;
-            const el = document.getElementById(id);
+        // Generic counter function
+        function animateNumber(element, target, suffix = '') {
+            let current = 0;
+            const step = Math.ceil(target / 60);
             const interval = setInterval(() => {
-                count += Math.ceil(target / 50);
-                if (count >= target) {
-                    el.innerText = target + "+";
+                current += step;
+                if (current >= target) {
+                    element.innerText = target + suffix;
                     clearInterval(interval);
                 } else {
-                    el.innerText = count;
+                    element.innerText = current + suffix;
                 }
-            }, 30);
-        };
+            }, 25);
+        }
 
-        const statsObserver = new IntersectionObserver((entries) => {
+        // Main stats counter
+        const mainStatsObserver = new IntersectionObserver((entries) => {
             if (entries[0].isIntersecting) {
-                startCounter('statStudents', 4500);
-                startCounter('statRankers', 1200);
-                startCounter('statFaculty', 150);
-                statsObserver.disconnect();
+                animateNumber(document.getElementById('statStudents'), 4500, '+');
+                animateNumber(document.getElementById('statRankers'), 1200, '+');
+                animateNumber(document.getElementById('statFaculty'), 150, '+');
+                mainStatsObserver.disconnect();
             }
-        });
-        const statsPanel = document.querySelector('#main-content .stats-panel');
-        if (statsPanel) statsObserver.observe(statsPanel);
+        }, { threshold: 0.4 });
+        const mainStatsPanel = document.querySelector('#main-content .stats-panel');
+        if (mainStatsPanel) mainStatsObserver.observe(mainStatsPanel);
+
+        // Achievements counter
+        const achievementsObserver = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting) {
+                animateNumber(document.getElementById('achievementPassPercent'), 98, '%');
+                animateNumber(document.getElementById('achievementSelections'), 500, '+');
+                animateNumber(document.getElementById('achievementRankers'), 50, '+');
+                achievementsObserver.disconnect();
+            }
+        }, { threshold: 0.4 });
+        const achievementsPanel = document.querySelector('#results .stats-panel');
+        if (achievementsPanel) achievementsObserver.observe(achievementsPanel);
 
         // Navbar scroll effect
         window.addEventListener('scroll', () => {
@@ -984,7 +999,7 @@
             });
         });
 
-        console.log('✅ RK Junior College | Light theme | Mobile menu | Logo in header');
+        console.log('✅ RK Junior College | All stats now count up from 0');
     </script>
 </body>
 </html>
