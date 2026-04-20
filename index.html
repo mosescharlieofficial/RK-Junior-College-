@@ -1,0 +1,990 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>RK Junior College | Light Theme 3D Loading</title>
+    <!-- Google Fonts + Font Awesome -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #ffffff;
+            color: #1e293b;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        /* ---------- LOADING SCREEN (LIGHT THEME) ---------- */
+        #loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2000;
+            background: #f8fafc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+
+        #loading-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+
+        .loading-text {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            color: #1e293b;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            margin-top: 65vh;
+            font-weight: 600;
+            text-transform: uppercase;
+            background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(8px);
+            padding: 0.5rem 1.5rem;
+            border-radius: 40px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .loading-text i {
+            margin-right: 8px;
+            color: #2563eb;
+        }
+
+        /* ---------- MAIN WEBSITE (LIGHT THEME, SUBTLE 3D) ---------- */
+        #main-content {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.6s ease, visibility 0.6s ease;
+        }
+
+        #canvas-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .content {
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Navbar - mobile first */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 0.8rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid #e2e8f0;
+            z-index: 1000;
+            transition: 0.3s;
+        }
+
+        .navbar.scrolled {
+            padding: 0.6rem 5%;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+
+        .logo-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-img {
+            height: 40px;
+            width: auto;
+            border-radius: 8px;
+        }
+
+        .logo-text {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #1e40af;
+            letter-spacing: -0.5px;
+        }
+
+        /* Desktop navigation */
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: #475569;
+            text-decoration: none;
+            font-weight: 600;
+            transition: 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .nav-links a:hover {
+            color: #2563eb;
+        }
+
+        .nav-btn {
+            background: #2563eb;
+            padding: 0.5rem 1.2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            color: white !important;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+        }
+
+        /* Mobile menu button */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.6rem;
+            color: #1e293b;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
+        /* Mobile navigation overlay */
+        .mobile-nav {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 75%;
+            max-width: 300px;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            box-shadow: -5px 0 25px rgba(0,0,0,0.1);
+            z-index: 1002;
+            transition: right 0.3s ease;
+            padding: 5rem 2rem 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .mobile-nav.active {
+            right: 0;
+        }
+
+        .mobile-nav a {
+            color: #1e293b;
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #e2e8f0;
+            transition: 0.2s;
+        }
+
+        .mobile-nav a:hover {
+            color: #2563eb;
+            padding-left: 5px;
+        }
+
+        .close-menu {
+            position: absolute;
+            top: 1.2rem;
+            right: 1.5rem;
+            font-size: 1.6rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #1e293b;
+        }
+
+        .menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.3);
+            z-index: 1001;
+            display: none;
+        }
+
+        .menu-overlay.active {
+            display: block;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 90vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 7rem 1.5rem 4rem;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            padding: 0.4rem 1.2rem;
+            border-radius: 60px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #1d4ed8;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero h1 {
+            font-size: clamp(2rem, 7vw, 4rem);
+            font-weight: 800;
+            line-height: 1.2;
+            color: #0f172a;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero h1 span {
+            color: #2563eb;
+        }
+
+        .hero p {
+            font-size: 1rem;
+            color: #64748b;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+            line-height: 1.6;
+        }
+
+        .btn {
+            padding: 0.8rem 1.8rem;
+            border-radius: 8px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px rgba(37, 99, 235, 0.25);
+        }
+
+        .btn-outline {
+            border: 2px solid #e2e8f0;
+            color: #1e293b;
+            background: white;
+        }
+
+        .btn-outline:hover {
+            border-color: #2563eb;
+            background: #f8fafc;
+        }
+
+        /* Sections */
+        section { padding: 80px 5%; }
+
+        .section-title {
+            font-size: clamp(1.8rem, 5vw, 2.3rem);
+            font-weight: 800;
+            text-align: center;
+            margin-bottom: 3rem;
+            color: #0f172a;
+        }
+
+        /* Cards */
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 2rem;
+        }
+
+        .glass-card {
+            background: #f8fafc;
+            border-radius: 20px;
+            padding: 2rem 1.5rem;
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+
+        .glass-card i {
+            font-size: 2.2rem;
+            color: #2563eb;
+            margin-bottom: 1.2rem;
+        }
+
+        .glass-card h3 {
+            font-size: 1.3rem;
+            color: #0f172a;
+            margin-bottom: 0.8rem;
+        }
+
+        .glass-card p {
+            color: #64748b;
+            line-height: 1.5;
+            font-size: 0.9rem;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-8px);
+            background: #ffffff;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.05);
+            border-color: #2563eb;
+        }
+
+        /* Stats panel */
+        .stats-panel {
+            background: #1e293b;
+            border-radius: 30px;
+            padding: 3rem 1.5rem;
+            color: white;
+        }
+
+        .stats-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            gap: 1.5rem;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #60a5fa;
+            display: block;
+        }
+
+        /* Footer - clean spacing */
+        footer {
+            background: #f1f5f9;
+            padding: 2rem 5%;
+            text-align: center;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .social-links {
+            margin-bottom: 1.5rem;
+        }
+
+        .social-links a {
+            color: #64748b;
+            font-size: 1.2rem;
+            margin: 0 0.6rem;
+            transition: 0.2s;
+            display: inline-block;
+        }
+
+        .social-links a:hover {
+            color: #2563eb;
+            transform: translateY(-3px);
+        }
+
+        .footer-text {
+            color: #64748b;
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+
+        .footer-text p {
+            margin: 0.3rem 0;
+        }
+
+        /* Scroll reveal */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: 0.8s all ease;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Mobile specific */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            .menu-toggle {
+                display: block;
+            }
+            .navbar {
+                padding: 0.7rem 5%;
+            }
+            .logo-img {
+                height: 32px;
+            }
+            .logo-text {
+                font-size: 1.1rem;
+            }
+            .hero {
+                padding-top: 6rem;
+                min-height: auto;
+            }
+            .btn-group {
+                flex-direction: column;
+                align-items: center;
+                gap: 0.8rem;
+            }
+            .btn {
+                width: 80%;
+                justify-content: center;
+            }
+            section {
+                padding: 60px 5%;
+            }
+            .stats-panel {
+                padding: 2rem 1rem;
+            }
+            .stat-number {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+            .hero p {
+                font-size: 0.9rem;
+            }
+            .section-title {
+                font-size: 1.5rem;
+            }
+            .glass-card {
+                padding: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LOADING SCREEN WITH 3D LOGO (LIGHT THEME) -->
+    <div id="loading-screen">
+        <canvas id="loading-canvas"></canvas>
+        <div class="loading-text">
+            <i class="fas fa-spinner fa-pulse"></i> LOADING EXPERIENCE...
+        </div>
+    </div>
+
+    <!-- MAIN WEBSITE CONTENT -->
+    <div id="main-content">
+        <canvas id="canvas-bg"></canvas>
+        <div class="content">
+            <nav class="navbar" id="navbar">
+                <div class="logo-wrapper">
+                    <img src="logo.png" alt="RK Junior College Logo" class="logo-img" id="navLogo">
+                    <div class="logo-text">RK JUNIOR COLLEGE</div>
+                </div>
+                <div class="nav-links">
+                    <a href="#home">Home</a>
+                    <a href="#programs">Programs</a>
+                    <a href="#excellence">Excellence</a>
+                    <a href="#gallery">Gallery</a>
+                    <a href="#results">Results</a>
+                    <a href="#hostel">Hostel</a>
+                    <a href="#contact">Contact</a>
+                    <a href="#" class="nav-btn">Apply Now</a>
+                </div>
+                <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+            </nav>
+
+            <!-- Mobile Navigation -->
+            <div class="mobile-nav" id="mobileNav">
+                <button class="close-menu" id="closeMenu"><i class="fas fa-times"></i></button>
+                <a href="#home">Home</a>
+                <a href="#programs">Programs</a>
+                <a href="#excellence">Excellence</a>
+                <a href="#gallery">Gallery</a>
+                <a href="#results">Results</a>
+                <a href="#hostel">Hostel</a>
+                <a href="#contact">Contact</a>
+                <a href="#" class="nav-btn" style="text-align: center;">Apply Now</a>
+            </div>
+            <div class="menu-overlay" id="menuOverlay"></div>
+
+            <section id="home" class="hero">
+                <div class="hero-content reveal">
+                    <div class="hero-badge"><i class="fas fa-calendar-check"></i> Admissions 2026 Now Open</div>
+                    <h1>Empowering the Next Generation of <span>Leaders</span></h1>
+                    <p>Join a community of excellence with world-class faculty, state-of-the-art facilities, and a legacy of top-tier academic results.</p>
+                    <div class="btn-group">
+                        <a href="#programs" class="btn btn-primary">Our Programs <i class="fas fa-chevron-right"></i></a>
+                        <a href="#" class="btn btn-outline">Campus Gallery</a>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <div class="stats-panel reveal">
+                    <div class="stats-container">
+                        <div class="stat-item">
+                            <span class="stat-number" id="statStudents">0</span>
+                            <div style="color: #cbd5e1; font-weight: 600;">ENROLLED STUDENTS</div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="statRankers">0</span>
+                            <div style="color: #cbd5e1; font-weight: 600;">TOP RANKERS</div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" id="statFaculty">0</span>
+                            <div style="color: #cbd5e1; font-weight: 600;">EXPERT FACULTY</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="programs">
+                <h2 class="section-title reveal">Academic Programs</h2>
+                <div class="grid-3">
+                    <div class="glass-card reveal">
+                        <i class="fas fa-atom"></i>
+                        <h3>MPC Stream</h3>
+                        <p>Physics, Chemistry, and Math with integrated JEE Advanced training modules.</p>
+                    </div>
+                    <div class="glass-card reveal">
+                        <i class="fas fa-microscope"></i>
+                        <h3>BiPC Stream</h3>
+                        <p>Biological Sciences and NEET coaching with advanced laboratory practice.</p>
+                    </div>
+                    <div class="glass-card reveal">
+                        <i class="fas fa-balance-scale"></i>
+                        <h3>Commerce & Arts</h3>
+                        <p>Specialized CA Foundation and CLAT preparation for aspiring professionals.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="excellence">
+                <h2 class="section-title reveal">Why Choose RK Junior College?</h2>
+                <div class="grid-3">
+                    <div class="glass-card reveal">
+                        <i class="fas fa-chalkboard-user"></i>
+                        <h3>Expert Faculty</h3>
+                        <p>Learn from IIT/NIT alumni and industry professionals with years of teaching experience.</p>
+                    </div>
+                    <div class="glass-card reveal">
+                        <i class="fas fa-laptop-code"></i>
+                        <h3>Smart Labs</h3>
+                        <p>VR-enabled classrooms, digital libraries, and advanced science laboratories.</p>
+                    </div>
+                    <div class="glass-card reveal">
+                        <i class="fas fa-trophy"></i>
+                        <h3>Proven Results</h3>
+                        <p>Consistent record of top ranks in JEE, NEET, CA Foundation, and CLAT exams.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="gallery">
+                <h2 class="section-title reveal">Campus Gallery</h2>
+                <div class="grid-3">
+                    <div class="glass-card reveal">
+                        <i class="fas fa-chalkboard"></i>
+                        <h3>Smart Classrooms</h3>
+                        <p>Modern, tech-enabled learning spaces.</p>
+                    </div>
+                    <div class="glass-card reveal">
+                        <i class="fas fa-flask"></i>
+                        <h3>Advanced Labs</h3>
+                        <p>State-of-the-art science and computer labs.</p>
+                    </div>
+                    <div class="glass-card reveal">
+                        <i class="fas fa-book"></i>
+                        <h3>Digital Library</h3>
+                        <p>24/7 access to thousands of resources.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="results">
+                <h2 class="section-title reveal">Our Achievements</h2>
+                <div class="stats-panel reveal" style="background: #f8fafc; color: #1e293b; border: 1px solid #e2e8f0;">
+                    <div class="stats-container">
+                        <div class="stat-item">
+                            <span class="stat-number" style="color: #2563eb;">98%</span>
+                            <div style="font-weight: 600;">PASS PERCENTAGE</div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" style="color: #2563eb;">500+</span>
+                            <div style="font-weight: 600;">JEE/NEET SELECTIONS</div>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" style="color: #2563eb;">50+</span>
+                            <div style="font-weight: 600;">CA FOUNDATION RANKERS</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="hostel">
+                <h2 class="section-title reveal">Hostel Facilities</h2>
+                <div class="grid-3">
+                    <div class="glass-card reveal">
+                        <i class="fas fa-bed"></i>
+                        <h3>Comfortable Rooms</h3>
+                        <p>Spacious, well-ventilated non-AC rooms with attached washrooms.</p>
+                    </div>
+                    <div class="glass-card reveal">
+                        <i class="fas fa-utensils"></i>
+                        <h3>Nutritious Meals</h3>
+                        <p>Hygienic mess with balanced diet plans (veg & non-veg options).</p>
+                    </div>
+                    <div class="glass-card reveal">
+                        <i class="fas fa-shield-alt"></i>
+                        <h3>24/7 Security</h3>
+                        <p>CCTV surveillance, warden support, and secure environment.</p>
+                    </div>
+                </div>
+            </section>
+
+            <footer id="contact">
+                <div class="footer-content">
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-youtube"></i></a>
+                    </div>
+                    <div class="footer-text">
+                        <p>© 2026 RK Junior College. All Rights Reserved.</p>
+                        <p>Building bright futures through quality education.</p>
+                        <p><i class="fas fa-phone-alt"></i> +91 800 123 4567 &nbsp;|&nbsp; <i class="fas fa-envelope"></i> admissions@rkjrcollege.edu</p>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+
+    <!-- Three.js Module -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.128.0/build/three.module.js"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+
+        // ---------- LOADING SCREEN 3D (LIGHT THEME) ----------
+        const loadingCanvas = document.getElementById('loading-canvas');
+        const loadingScreen = document.getElementById('loading-screen');
+        const mainContent = document.getElementById('main-content');
+        const navLogo = document.getElementById('navLogo');
+
+        const loadScene = new THREE.Scene();
+        loadScene.background = new THREE.Color(0xf8fafc);
+
+        const loadCamera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        loadCamera.position.set(0, 0.5, 6);
+
+        const loadRenderer = new THREE.WebGLRenderer({ canvas: loadingCanvas, alpha: false });
+        loadRenderer.setSize(window.innerWidth, window.innerHeight);
+        loadRenderer.setPixelRatio(window.devicePixelRatio);
+
+        const ambient = new THREE.AmbientLight(0xffffff, 0.7);
+        loadScene.add(ambient);
+        const mainLight = new THREE.DirectionalLight(0xffffff, 1);
+        mainLight.position.set(2, 3, 4);
+        loadScene.add(mainLight);
+        const fillLight = new THREE.PointLight(0x3b82f6, 0.3);
+        fillLight.position.set(-1, 1, 2);
+        loadScene.add(fillLight);
+
+        const logoGroup = new THREE.Group();
+        const textureLoader = new THREE.TextureLoader();
+        const logoTexture = textureLoader.load('logo.png', 
+            () => {
+                console.log('Logo loaded');
+                // Also set the navbar logo image
+                if (navLogo) navLogo.src = 'logo.png';
+            },
+            undefined,
+            () => {
+                console.warn('Using fallback logo');
+                if (navLogo) navLogo.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Ccircle cx="50" cy="50" r="45" fill="%232563eb"/%3E%3Ctext x="50" y="67" font-size="40" text-anchor="middle" fill="white" font-weight="bold"%3ERK%3C/text%3E%3C/svg%3E';
+            }
+        );
+
+        // Fallback canvas texture for 3D
+        const fallbackCanvas = document.createElement('canvas');
+        fallbackCanvas.width = 512;
+        fallbackCanvas.height = 512;
+        const ctx = fallbackCanvas.getContext('2d');
+        ctx.fillStyle = '#f8fafc';
+        ctx.fillRect(0, 0, 512, 512);
+        const grad = ctx.createLinearGradient(0, 0, 512, 512);
+        grad.addColorStop(0, '#3b82f6');
+        grad.addColorStop(1, '#a855f7');
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(256, 256, 220, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'Bold 70px "Inter"';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('RK', 256, 260);
+        ctx.font = '30px "Inter"';
+        ctx.fillStyle = '#e0e7ff';
+        ctx.fillText('JUNIOR COLLEGE', 256, 340);
+        const fallbackTexture = new THREE.CanvasTexture(fallbackCanvas);
+
+        const logoMaterial = new THREE.MeshStandardMaterial({
+            map: logoTexture,
+            transparent: true,
+            side: THREE.DoubleSide,
+            roughness: 0.3,
+            metalness: 0.1,
+            emissive: 0xffffff,
+            emissiveIntensity: 0.05
+        });
+
+        logoTexture.addEventListener('error', () => {
+            logoMaterial.map = fallbackTexture;
+            logoMaterial.needsUpdate = true;
+        });
+
+        const logoPlane = new THREE.Mesh(new THREE.PlaneGeometry(2.2, 2.2), logoMaterial);
+        logoGroup.add(logoPlane);
+
+        const particleCount = 1000;
+        const particleGeo = new THREE.BufferGeometry();
+        const positions = new Float32Array(particleCount * 3);
+        for (let i = 0; i < particleCount; i++) {
+            positions[i*3] = (Math.random() - 0.5) * 8;
+            positions[i*3+1] = (Math.random() - 0.5) * 6;
+            positions[i*3+2] = (Math.random() - 0.5) * 5 - 2;
+        }
+        particleGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        const particleMat = new THREE.PointsMaterial({ color: 0x3b82f6, size: 0.045, transparent: true, opacity: 0.35 });
+        const particles = new THREE.Points(particleGeo, particleMat);
+        logoGroup.add(particles);
+
+        loadScene.add(logoGroup);
+
+        const starCount = 1200;
+        const starGeo = new THREE.BufferGeometry();
+        const starPos = new Float32Array(starCount * 3);
+        for (let i = 0; i < starCount; i++) {
+            const r = 5 + Math.random() * 8;
+            const theta = Math.random() * Math.PI * 2;
+            const phi = Math.acos(2 * Math.random() - 1);
+            starPos[i*3] = r * Math.sin(phi) * Math.cos(theta);
+            starPos[i*3+1] = r * Math.sin(phi) * Math.sin(theta) * 0.6;
+            starPos[i*3+2] = r * Math.cos(phi);
+        }
+        starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+        const starMat = new THREE.PointsMaterial({ color: 0x94a3b8, size: 0.04, transparent: true, opacity: 0.4 });
+        const stars = new THREE.Points(starGeo, starMat);
+        loadScene.add(stars);
+
+        let targetY = 0, targetX = 0, curY = 0, curX = 0;
+        window.addEventListener('mousemove', (e) => {
+            targetY = (e.clientX / window.innerWidth) * 0.8 - 0.4;
+            targetX = (e.clientY / window.innerHeight) * 0.4 - 0.2;
+        });
+
+        let time = 0;
+        function animateLoading() {
+            requestAnimationFrame(animateLoading);
+            time += 0.01;
+            curX += (targetX - curX) * 0.05;
+            curY += (targetY - curY) * 0.05;
+            logoGroup.rotation.x = curX * 0.6 + Math.sin(time * 0.2) * 0.08;
+            logoGroup.rotation.y = curY * 0.8 + time * 0.25;
+            particles.rotation.y = time * 0.08;
+            stars.rotation.y = time * 0.01;
+            loadCamera.lookAt(0, 0, 0);
+            loadRenderer.render(loadScene, loadCamera);
+        }
+        animateLoading();
+
+        window.addEventListener('resize', () => {
+            loadCamera.aspect = window.innerWidth / window.innerHeight;
+            loadCamera.updateProjectionMatrix();
+            loadRenderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // ---------- MAIN SITE 3D (ONLY PARTICLES) ----------
+        const mainCanvas = document.getElementById('canvas-bg');
+        const mainScene = new THREE.Scene();
+        mainScene.background = new THREE.Color(0xffffff);
+
+        const mainCamera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        mainCamera.position.z = 7;
+
+        const mainRenderer = new THREE.WebGLRenderer({ canvas: mainCanvas, antialias: true, alpha: false });
+        mainRenderer.setSize(window.innerWidth, window.innerHeight);
+        mainRenderer.setPixelRatio(window.devicePixelRatio);
+
+        const dustCountMain = 600;
+        const dustGeoMain = new THREE.BufferGeometry();
+        const dustPosMain = new Float32Array(dustCountMain * 3);
+        for (let i = 0; i < dustCountMain * 3; i++) {
+            dustPosMain[i] = (Math.random() - 0.5) * 12;
+        }
+        dustGeoMain.setAttribute('position', new THREE.BufferAttribute(dustPosMain, 3));
+        const dustMatMain = new THREE.PointsMaterial({ color: 0x3b82f6, size: 0.045, transparent: true, opacity: 0.2 });
+        const mainParticles = new THREE.Points(dustGeoMain, dustMatMain);
+        mainScene.add(mainParticles);
+
+        function animateMain() {
+            requestAnimationFrame(animateMain);
+            mainParticles.rotation.y += 0.002;
+            mainParticles.rotation.x += 0.001;
+            mainRenderer.render(mainScene, mainCamera);
+        }
+        animateMain();
+
+        window.addEventListener('resize', () => {
+            mainCamera.aspect = window.innerWidth / window.innerHeight;
+            mainCamera.updateProjectionMatrix();
+            mainRenderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // ---------- TRANSITION ----------
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                loadingScreen.style.opacity = '0';
+                loadingScreen.style.visibility = 'hidden';
+                mainContent.style.opacity = '1';
+                mainContent.style.visibility = 'visible';
+            }, 2000);
+        });
+        setTimeout(() => {
+            if (loadingScreen.style.visibility !== 'hidden') {
+                loadingScreen.style.opacity = '0';
+                loadingScreen.style.visibility = 'hidden';
+                mainContent.style.opacity = '1';
+                mainContent.style.visibility = 'visible';
+            }
+        }, 3500);
+
+        // ---------- SCROLL REVEAL & COUNTERS ----------
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('active'); });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('#main-content .reveal').forEach(el => observer.observe(el));
+
+        const startCounter = (id, target) => {
+            let count = 0;
+            const el = document.getElementById(id);
+            const interval = setInterval(() => {
+                count += Math.ceil(target / 50);
+                if (count >= target) {
+                    el.innerText = target + "+";
+                    clearInterval(interval);
+                } else {
+                    el.innerText = count;
+                }
+            }, 30);
+        };
+
+        const statsObserver = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting) {
+                startCounter('statStudents', 4500);
+                startCounter('statRankers', 1200);
+                startCounter('statFaculty', 150);
+                statsObserver.disconnect();
+            }
+        });
+        const statsPanel = document.querySelector('#main-content .stats-panel');
+        if (statsPanel) statsObserver.observe(statsPanel);
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 60) nav.classList.add('scrolled');
+            else nav.classList.remove('scrolled');
+        });
+
+        // Mobile menu functionality
+        const menuToggle = document.getElementById('menuToggle');
+        const mobileNav = document.getElementById('mobileNav');
+        const menuOverlay = document.getElementById('menuOverlay');
+        const closeMenuBtn = document.getElementById('closeMenu');
+
+        function openMenu() {
+            mobileNav.classList.add('active');
+            menuOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeMenuFunc() {
+            mobileNav.classList.remove('active');
+            menuOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        menuToggle.addEventListener('click', openMenu);
+        closeMenuBtn.addEventListener('click', closeMenuFunc);
+        menuOverlay.addEventListener('click', closeMenuFunc);
+
+        document.querySelectorAll('.mobile-nav a').forEach(link => {
+            link.addEventListener('click', (e) => {
+                closeMenuFunc();
+                const hash = link.getAttribute('href');
+                if (hash && hash.startsWith('#') && hash !== '#') {
+                    e.preventDefault();
+                    const target = document.querySelector(hash);
+                    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        document.querySelectorAll('#main-content .nav-links a, #main-content .btn-primary, #main-content .btn-outline').forEach(link => {
+            link.addEventListener('click', (e) => {
+                const hash = link.getAttribute('href');
+                if (hash && hash.startsWith('#') && hash !== '#') {
+                    e.preventDefault();
+                    const target = document.querySelector(hash);
+                    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        console.log('✅ RK Junior College | Light theme | Mobile menu | Logo in header');
+    </script>
+</body>
+</html>
