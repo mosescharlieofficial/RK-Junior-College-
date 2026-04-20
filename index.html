@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>RK Junior College | Animated Stats</title>
+    <title>RK Junior College | AI Chatbot</title>
     <!-- Google Fonts + Font Awesome -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -438,6 +438,151 @@
             transform: translateY(0);
         }
 
+        /* ---------- AI CHATBOT ---------- */
+        .chatbot-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1100;
+        }
+
+        .chat-toggle {
+            width: 60px;
+            height: 60px;
+            background: #2563eb;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(37,99,235,0.3);
+            transition: 0.2s;
+            color: white;
+            font-size: 28px;
+        }
+
+        .chat-toggle:hover {
+            transform: scale(1.05);
+            background: #1d4ed8;
+        }
+
+        .chat-window {
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            width: 350px;
+            height: 500px;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            border: 1px solid #e2e8f0;
+        }
+
+        .chat-window.open {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .chat-header {
+            background: #2563eb;
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 700;
+        }
+
+        .chat-header button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: #f8fafc;
+        }
+
+        .message {
+            max-width: 85%;
+            padding: 10px 14px;
+            border-radius: 18px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .bot-message {
+            background: #e2e8f0;
+            color: #1e293b;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+
+        .user-message {
+            background: #2563eb;
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .chat-input {
+            display: flex;
+            padding: 12px;
+            background: white;
+            border-top: 1px solid #e2e8f0;
+            gap: 8px;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 30px;
+            outline: none;
+            font-family: inherit;
+            font-size: 0.85rem;
+        }
+
+        .chat-input button {
+            background: #2563eb;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            color: white;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .chat-input button:hover {
+            background: #1d4ed8;
+        }
+
+        @media (max-width: 480px) {
+            .chat-window {
+                width: 300px;
+                height: 450px;
+                right: 0;
+                bottom: 70px;
+            }
+        }
+
         /* Mobile specific */
         @media (max-width: 768px) {
             .nav-links {
@@ -501,7 +646,7 @@
     <div id="loading-screen">
         <canvas id="loading-canvas"></canvas>
         <div class="loading-text">
-            <i class="fas fa-spinner fa-pulse"></i> LOADING EXPERIENCE...
+            <i class="fas fa-spinner fa-pulse"></i> LOADING ...
         </div>
     </div>
 
@@ -511,7 +656,7 @@
         <div class="content">
             <nav class="navbar" id="navbar">
                 <div class="logo-wrapper">
-                    <img src="logo.PNG" alt="RK Junior College Logo" class="logo-img" id="navLogo">
+                    <img src="logo.png" alt="RK Junior College Logo" class="logo-img" id="navLogo">
                     <div class="logo-text">RK JUNIOR COLLEGE</div>
                 </div>
                 <div class="nav-links">
@@ -600,17 +745,17 @@
                     <div class="glass-card reveal">
                         <i class="fas fa-chalkboard-user"></i>
                         <h3>Expert Faculty</h3>
-                        <p>Learn from IIT/NIT alumni and industry professionals with years of teaching experience.</p>
+                        <p>Learn from alumni and industry professionals with years of teaching experience</p>
                     </div>
                     <div class="glass-card reveal">
                         <i class="fas fa-laptop-code"></i>
                         <h3>Smart Labs</h3>
-                        <p>VR-enabled classrooms, digital libraries, and advanced science laboratories.</p>
+                        <p>VR-enabled classrooms, digital libraries, and advanced science laboratories</p>
                     </div>
                     <div class="glass-card reveal">
                         <i class="fas fa-trophy"></i>
                         <h3>Proven Results</h3>
-                        <p>Consistent record of top ranks in JEE, NEET, CA Foundation, and CLAT exams.</p>
+                        <p>Consistent record of top ranks in JEE, NEET, CA Foundation, and CLAT exams</p>
                     </div>
                 </div>
             </section>
@@ -621,17 +766,17 @@
                     <div class="glass-card reveal">
                         <i class="fas fa-chalkboard"></i>
                         <h3>Smart Classrooms</h3>
-                        <p>Modern, tech-enabled learning spaces.</p>
+                        <p>Modern, tech-enabled learning spaces</p>
                     </div>
                     <div class="glass-card reveal">
                         <i class="fas fa-flask"></i>
                         <h3>Advanced Labs</h3>
-                        <p>State-of-the-art science and computer labs.</p>
+                        <p>State-of-the-art science and computer labs</p>
                     </div>
                     <div class="glass-card reveal">
                         <i class="fas fa-book"></i>
                         <h3>Digital Library</h3>
-                        <p>24/7 access to thousands of resources.</p>
+                        <p>24/7 access to thousands of resources</p>
                     </div>
                 </div>
             </section>
@@ -663,17 +808,17 @@
                     <div class="glass-card reveal">
                         <i class="fas fa-bed"></i>
                         <h3>Comfortable Rooms</h3>
-                        <p>Spacious, well-ventilated non-AC rooms with attached washrooms.</p>
+                        <p>Spacious, well-ventilated non-AC rooms with attached washrooms</p>
                     </div>
                     <div class="glass-card reveal">
                         <i class="fas fa-utensils"></i>
                         <h3>Nutritious Meals</h3>
-                        <p>Hygienic mess with balanced diet plans (veg & non-veg options).</p>
+                        <p>Hygienic mess with balanced diet plans (veg & non-veg options)</p>
                     </div>
                     <div class="glass-card reveal">
                         <i class="fas fa-shield-alt"></i>
                         <h3>24/7 Security</h3>
-                        <p>CCTV surveillance, warden support, and secure environment.</p>
+                        <p>CCTV surveillance, warden support, and secure environment</p>
                     </div>
                 </div>
             </section>
@@ -689,10 +834,30 @@
                     <div class="footer-text">
                         <p>© 2026 RK Junior College. All Rights Reserved.</p>
                         <p>Building bright futures through quality education.</p>
-                        <p><i class="fas fa-phone-alt"></i> +91 800 123 4567 &nbsp;|&nbsp; <i class="fas fa-envelope"></i> admissions@rkjrcollege.edu</p>
+                        <p><i class="fas fa-phone-alt"></i> 9118512345 &nbsp;|&nbsp; <i class="fas fa-envelope"></i> admissions@rkjrcollege.edu</p>
                     </div>
                 </div>
             </footer>
+        </div>
+    </div>
+
+    <!-- AI Chatbot Widget -->
+    <div class="chatbot-container">
+        <div class="chat-toggle" id="chatToggle">
+            <i class="fas fa-comment-dots"></i>
+        </div>
+        <div class="chat-window" id="chatWindow">
+            <div class="chat-header">
+                <span><i class="fas fa-robot"></i> RK AI Assistant</span>
+                <button id="chatClose"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="message bot-message">👋 Hello! I'm RK AI Assistant. Ask me about admissions, courses, fees, hostel, or any college-related queries!</div>
+            </div>
+            <div class="chat-input">
+                <input type="text" id="chatInput" placeholder="Type your message...">
+                <button id="chatSend"><i class="fas fa-paper-plane"></i></button>
+            </div>
         </div>
     </div>
 
@@ -735,10 +900,10 @@
 
         const logoGroup = new THREE.Group();
         const textureLoader = new THREE.TextureLoader();
-        const logoTexture = textureLoader.load('logo.PNG', 
+        const logoTexture = textureLoader.load('logo.png', 
             () => {
                 console.log('Logo loaded');
-                if (navLogo) navLogo.src = 'logo.PNG';
+                if (navLogo) navLogo.src = 'logo.png';
             },
             undefined,
             () => {
@@ -999,7 +1164,71 @@
             });
         });
 
-        console.log('✅ RK Junior College | All stats now count up from 0');
+        // ----- AI Chatbot Logic -----
+        const chatToggle = document.getElementById('chatToggle');
+        const chatWindow = document.getElementById('chatWindow');
+        const chatClose = document.getElementById('chatClose');
+        const chatSend = document.getElementById('chatSend');
+        const chatInput = document.getElementById('chatInput');
+        const chatMessages = document.getElementById('chatMessages');
+
+        function toggleChat() {
+            chatWindow.classList.toggle('open');
+        }
+
+        chatToggle.addEventListener('click', toggleChat);
+        chatClose.addEventListener('click', toggleChat);
+
+        function addMessage(text, isUser = false) {
+            const msgDiv = document.createElement('div');
+            msgDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+            msgDiv.innerText = text;
+            chatMessages.appendChild(msgDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        function getBotReply(userMessage) {
+            const msg = userMessage.toLowerCase();
+            if (msg.includes('admission') || msg.includes('apply') || msg.includes('enroll')) {
+                return "🎓 Admissions for 2026 are now open! You can apply online through our website or visit the campus. Contact +91 800 123 4567 for more details.";
+            } else if (msg.includes('course') || msg.includes('program') || msg.includes('stream')) {
+                return "📚 We offer MPC (with IIT-JEE), BiPC (with NEET), and Commerce (with CA Foundation/CLAT). Each program has integrated coaching for competitive exams.";
+            } else if (msg.includes('fee') || msg.includes('cost') || msg.includes('tuition')) {
+                return "💰 The annual fee structure varies by stream. For MPC/BiPC it's approx ₹85,000, for Commerce ₹75,000. Scholarships available for meritorious students. Contact admissions for exact details.";
+            } else if (msg.includes('hostel')) {
+                return "🏠 Yes, we have separate boys' and girls' hostels with non-AC comfortable rooms, nutritious meals (veg & non-veg), 24/7 security, and wardens. Limited seats available.";
+            } else if (msg.includes('result') || msg.includes('rank') || msg.includes('achievement')) {
+                return "🏆 Our students have achieved 98% pass percentage with 500+ selections in JEE/NEET and 50+ rankers in CA Foundation over the last 3 years.";
+            } else if (msg.includes('faculty') || msg.includes('teacher')) {
+                return "👨‍🏫 Our faculty includes IIT/NIT alumni, PhD holders, and industry experts with 10+ years of teaching experience. Student-teacher ratio is 20:1.";
+            } else if (msg.includes('lab') || msg.includes('library')) {
+                return "🔬 We have VR-enabled smart classrooms, advanced physics/chemistry/biology labs, a digital library with 24/7 access, and computer labs with high-speed internet.";
+            } else if (msg.includes('contact') || msg.includes('phone') || msg.includes('email')) {
+                return "📞 You can reach us at +91 800 123 4567 or email admissions@rkjrcollege.edu. Our office hours are 9 AM to 5 PM, Monday to Saturday.";
+            } else if (msg.includes('hi') || msg.includes('hello') || msg.includes('hey')) {
+                return "Hello! How can I help you today? Feel free to ask about admissions, courses, fees, hostel, or results.";
+            } else {
+                return "I'm not sure about that. Please ask about admissions, courses, fees, hostel, faculty, results, or contact details. You can also call our helpline at +91 800 123 4567.";
+            }
+        }
+
+        function sendMessage() {
+            const text = chatInput.value.trim();
+            if (text === "") return;
+            addMessage(text, true);
+            chatInput.value = "";
+            setTimeout(() => {
+                const reply = getBotReply(text);
+                addMessage(reply);
+            }, 500);
+        }
+
+        chatSend.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendMessage();
+        });
+
+        console.log('✅ RK Junior College | AI Chatbot added | Stats count up from 0');
     </script>
 </body>
 </html>
